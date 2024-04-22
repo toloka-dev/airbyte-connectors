@@ -1,21 +1,150 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
-  "type": "object",
-  "properties": {
-    "id": {
-      "type": ["null", "string"]
+  "$schema" : "http://json-schema.org/draft-07/schema#",
+  "type" : "object",
+  "properties" : {
+    "id" : {
+      "type" : [
+        "null",
+        "string"
+      ]
     },
-    "name": {
-      "type": ["null", "string"]
+    "name" : {
+      "type" : [
+        "null",
+        "string"
+      ]
     },
-    "headline": {
-      "type": ["null", "string"]
+    "firstname" : {
+      "type" : [
+        "null",
+        "string"
+      ]
     },
-    "email": {
-      "type": ["null", "string"]
+    "lastname" : {
+      "type" : [
+        "null",
+        "string"
+      ]
     },
-    "role": {
-      "type": ["null", "string"]
+    "headline" : {
+      "type" : [
+        "null",
+        "string"
+      ]
+    },
+    "account" : {
+      "type" : [
+        "null",
+        "object"
+      ],
+      "additionalProperties" : true,
+      "properties" : {
+        "subdomain" : {
+          "type" : [
+            "null",
+            "string"
+          ]
+        },
+        "name" : {
+          "type" : [
+            "null",
+            "string"
+          ]
+        }
+      }
+    },
+    "job" : {
+      "type" : [
+        "null",
+        "object"
+      ],
+      "additionalProperties" : true,
+      "properties" : {
+        "shortcode" : {
+          "type" : [
+            "null",
+            "string"
+          ]
+        },
+        "title" : {
+          "type" : [
+            "null",
+            "string"
+          ]
+        }
+      }
+    },
+    "stage" : {
+      "type" : [
+        "null",
+        "string"
+      ]
+    },
+    "disqualified" : {
+      "type" : [
+        "null",
+        "boolean"
+      ]
+    },
+    "disqualification_reason" : {
+      "type" : [
+        "null",
+        "string"
+      ]
+    },
+    "sourced" : {
+      "type" : [
+        "null",
+        "string"
+      ]
+    },
+    "profile_url" : {
+      "type" : [
+        "null",
+        "string"
+      ]
+    },
+    "email" : {
+      "type" : [
+        "null",
+        "string"
+      ]
+    },
+    "domain" : {
+      "type" : [
+        "null",
+        "string"
+      ]
+    },
+    "created_at" : {
+      "type" : [
+        "null",
+        "string"
+      ]
+    },
+    "updated_at" : {
+      "type" : [
+        "null",
+        "string"
+      ]
+    },
+    "hired_at" : {
+      "type" : [
+        "null",
+        "string"
+      ]
+    },
+    "address" : {
+      "type" : [
+        "null",
+        "string"
+      ]
+    },
+    "phone" : {
+      "type" : [
+        "null",
+        "string"
+      ]
     }
   }
 }

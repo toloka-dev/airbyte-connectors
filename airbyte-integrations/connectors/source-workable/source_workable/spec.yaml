@@ -14,10 +14,12 @@ connectionSpecification:
       type: string
       description: Your Workable API Key. See <a href="https://workable.readme.io/reference/generate-an-access-token">here</a>.
       airbyte_secret: true
+      order: 0
     account_subdomain:
       title: Account Subdomain
       type: string
       description: Your Workable account subdomain, e.g. https://your_account_subdomain.workable.com.
+      order: 1
     start_date:
       title: Start Date
       type: string
@@ -26,3 +28,4 @@ connectionSpecification:
       examples:
         - 20150708T115616Z
         - 20221115T225616Z
+      order: 2
