@@ -3,6 +3,6 @@
 #
 
 
-from .destination import DestinationDatabricks
+from .destination import DestinationDatabricks  # noqa
 
 __all__ = ["DestinationDatabricks"]

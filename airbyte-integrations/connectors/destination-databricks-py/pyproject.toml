@@ -4,12 +4,11 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name = "airbyte-destination-databricks-py"
-version = "0.1.0"
+version = "0.1.1"
 description = "Airbyte destination implementation for Databricks (python)."
 authors = ["Leonid Kozhinov <lkozhinov@toloka.ai>"]
 license = "MIT"
 readme = "README.md"
-documentation = ""
 homepage = "https://airbyte.com"
 repository = "https://github.com/toloka-dev/airbyte-connectors"
 
@@ -23,15 +22,57 @@ include = "destination_databricks_py"
 
 [tool.poetry.dependencies]
 python = "^3.9"
-airbyte-cdk = "*"
-dbxio = "0.0.18"
+airbyte-cdk = "^1.1.0"
+dbxio = "0.0.26"
 
 [tool.poetry.group.dev.dependencies]
-pytest = ">=6.2,<7.0"
-pytest-docker = "2.0.1"
+pytest = "^8.2.1"
+pytest-docker = "*"
 docker = "*"
-ruff = "^0.3.2"
-mypy = "^1.9.0"
+mypy = "1.10.0"
+ruff = "0.4.4"
 
 [tool.poetry.scripts]
 destination-databricks = "destination_databricks_py.run:run"
+
+[tool.ruff]
+# https://docs.astral.sh/ruff/
+line-length = 120
+
+[tool.ruff.lint]
+select = [
+    # https://docs.astral.sh/ruff/rules/
+    "F",     # pyflakes
+    "E",     # pycodestyle (errors)
+    "W",     # pycodestyle (warnings) eg. trailing/leading whitespaces
+    "Q",     # quotes
+    "I001",  # unsorted imports (isort)
+    "TID",   # tidy-imports
+]
+
+[tool.ruff.lint.flake8-tidy-imports]
+ban-relative-imports = "all"
+
+[tool.ruff.lint.isort]
+# https://docs.astral.sh/ruff/rules/#isort-i
+
+[tool.autopep8]
+# docs: https://github.com/hhatto/autopep8
+max_line_length = 120
+aggressive = 2
+
+[tool.mypy]
+# docs: https://mypy.readthedocs.io/en/stable/config_file.html
+python_version = "3.10"
+warn_return_any = false
+warn_unused_configs = true
+warn_unused_ignores = true
+ignore_errors = false
+follow_imports = "silent"
+ignore_missing_imports = true
+strict = false
+
+# ignore mypy errors in tests
+[[tool.mypy.overrides]]
+module = "tests.*"
+ignore_errors = true
