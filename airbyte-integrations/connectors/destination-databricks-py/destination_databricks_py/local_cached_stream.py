@@ -41,7 +41,7 @@ class LocalCachedStream:
         self._cache_dir.__exit__(*args, **kwargs)
 
     def reset(self) -> None:
-        self._cache_dir = TemporaryDirectory(dir=self.tmp_dir, ignore_cleanup_errors=True)
+        self._cache_dir = TemporaryDirectory(dir=self.tmp_dir)
         self._buffer = None
         self._buffer_size = 0
         self._file_index = 0
