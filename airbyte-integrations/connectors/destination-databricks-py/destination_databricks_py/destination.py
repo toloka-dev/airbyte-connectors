@@ -7,9 +7,9 @@ import json
 import logging
 import time
 import typing as tp
-from collections import defaultdict
 from uuid import uuid4
 
+from contextlib import ExitStack
 import dbxio
 from airbyte_cdk.destinations import Destination
 from airbyte_cdk.models import (
@@ -22,9 +22,10 @@ from airbyte_cdk.models import (
     Type,
 )
 
-FIELD_AB_ID = "_airbyte_ab_id"
-FIELD_DATA = "_airbyte_data"
-FIELD_EMITTED_AT = "_airbyte_emitted_at"
+from destination_databricks_py.consts import DEST_SCHEMA, FIELD_AB_ID, FIELD_DATA, FIELD_EMITTED_AT
+from destination_databricks_py.local_cached_stream import LocalCachedStream
+
+LOGGER = logging.getLogger(__name__)
 
 
 def get_client(config: tp.Mapping[str, tp.Any]) -> dbxio.DbxIOClient:
@@ -51,13 +52,7 @@ def get_client(config: tp.Mapping[str, tp.Any]) -> dbxio.DbxIOClient:
 def table_path(catalog: str, schema: str, stream: str) -> dbxio.Table:
     return dbxio.Table(
         f"{catalog}.{schema}.{stream}",
-        schema=dbxio.TableSchema(
-            [
-                {"name": FIELD_AB_ID, "type": dbxio.types.StringType()},
-                {"name": FIELD_DATA, "type": dbxio.types.StringType()},
-                {"name": FIELD_EMITTED_AT, "type": dbxio.types.TimestampType()},
-            ]
-        ),
+        schema=DEST_SCHEMA,
     )
 
 
@@ -84,48 +79,56 @@ class DestinationDatabricks(Destination):
                 dbxio.drop_table(stream_tables[stream_name], client, force=True).wait()
 
         batch_id = str(uuid4())
-        buffer: tp.Dict[str, tp.List[dict]] = defaultdict(list)
+        with ExitStack() as stack:
+            buffer = {
+                s.stream.name: stack.enter_context(LocalCachedStream(s.stream.name, DEST_SCHEMA, LOGGER))
+                for s in configured_catalog.streams
+            }
 
-        def flush_streams(streams: tp.List[str]):
-            for stream in streams:
-                records = buffer.pop(stream, None)
-                if not records:
-                    continue
-                dbxio.bulk_write_table(
-                    table=stream_tables[stream],
-                    new_records=records,
-                    client=client,
-                    abs_name=abs_name,
-                    abs_container_name=abs_container_name,
-                    append=True,
-                )
+            def flush_streams(streams: tp.List[str]):
+                for stream in streams:
+                    cache = buffer[stream]
+                    files = cache.get_files()
+                    if not files:
+                        continue
+                    dbxio.bulk_write_local_files(
+                        table=stream_tables[stream],
+                        path=cache.cache_dir,
+                        table_format=dbxio.TableFormat.PARQUET,
+                        client=client,
+                        abs_name=abs_name,
+                        abs_container_name=abs_container_name,
+                        append=True,
+                        force=True,
+                    )
+                    cache.reset()
 
-        for message in input_messages:
-            if message.type == Type.STATE:
-                state = message.state
-                if state.type is None or state.type == AirbyteStateType.LEGACY:
-                    streams_to_flush = list(stream_tables.keys())
-                elif state.type == AirbyteStateType.STREAM:
-                    streams_to_flush = [state.stream.stream_descriptor.name]
-                elif state.type == AirbyteStateType.GLOBAL:
-                    streams_to_flush = [s.stream_descriptor.name for s in state.global_.stream_states]
+            for message in input_messages:
+                if message.type == Type.STATE:
+                    state = message.state
+                    if state.type is None or state.type == AirbyteStateType.LEGACY:
+                        streams_to_flush = list(stream_tables.keys())
+                    elif state.type == AirbyteStateType.STREAM:
+                        streams_to_flush = [state.stream.stream_descriptor.name]
+                    elif state.type == AirbyteStateType.GLOBAL:
+                        streams_to_flush = [s.stream_descriptor.name for s in state.global_.stream_states]
+                    else:
+                        raise NotImplementedError(f"Unknown state event: {state.type}")
+                    flush_streams(streams_to_flush)
+                    yield message
+                elif message.type == Type.RECORD:
+                    record = message.record
+                    buffer[record.stream].add_record(
+                        {
+                            FIELD_AB_ID: batch_id,
+                            FIELD_EMITTED_AT: record.emitted_at,
+                            FIELD_DATA: json.dumps(record.data, separators=(",", ":")),
+                        }
+                    )
                 else:
-                    raise NotImplementedError(f"Unknown state event: {state.type}")
-                flush_streams(streams_to_flush)
-                yield message
-            elif message.type == Type.RECORD:
-                record = message.record
-                buffer[record.stream].append(
-                    {
-                        FIELD_AB_ID: batch_id,
-                        FIELD_EMITTED_AT: record.emitted_at,
-                        FIELD_DATA: json.dumps(record.data, separators=(",", ":")),
-                    }
-                )
-            else:
-                continue
+                    continue
 
-        flush_streams(list(stream_tables.keys()))
+            flush_streams(list(stream_tables.keys()))
 
     def check(self, logger: logging.Logger, config: tp.Mapping[str, tp.Any]) -> AirbyteConnectionStatus:
         logger.debug("Databricks Destination Config Check")

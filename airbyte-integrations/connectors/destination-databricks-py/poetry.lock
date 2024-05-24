@@ -1724,6 +1724,22 @@ url = "https://pkgs.dev.azure.com/toloka/_packaging/Python/pypi/simple"
 reference = "azure"
 
 [[package]]
+name = "pympler"
+version = "1.0.1"
+description = "A development tool to measure, monitor and analyze the memory behavior of Python objects."
+optional = false
+python-versions = ">=3.6"
+files = [
+    {file = "Pympler-1.0.1-py3-none-any.whl", hash = "sha256:d260dda9ae781e1eab6ea15bacb84015849833ba5555f141d2d9b7b7473b307d"},
+    {file = "Pympler-1.0.1.tar.gz", hash = "sha256:993f1a3599ca3f4fcd7160c7545ad06310c9e12f70174ae7ae8d4e25f6c5d3fa"},
+]
+
+[package.source]
+type = "legacy"
+url = "https://pkgs.dev.azure.com/toloka/_packaging/Python/pypi/simple"
+reference = "azure"
+
+[[package]]
 name = "pyrate-limiter"
 version = "3.1.1"
 description = "Python Rate-Limiter using Leaky-Bucket Algorithm"
@@ -2369,4 +2385,4 @@ reference = "azure"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "3f92cde261d16e813535741e10845a4e136d00b430bbad4acc6b9e7e968ed5f7"
+content-hash = "899537a96d14ea9f882b7af80dc572449e5b92f1c2288375c1b51640aa89d1ba"
