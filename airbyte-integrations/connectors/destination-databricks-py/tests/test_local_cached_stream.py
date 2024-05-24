@@ -1,3 +1,4 @@
+import itertools
 import logging
 import os
 from pathlib import Path
@@ -5,6 +6,7 @@ from tempfile import mkstemp
 
 import dbxio
 import pyarrow.parquet as pq
+from pympler import asizeof
 
 from destination_databricks_py.local_cached_stream import LocalCachedStream, _save_to_parquet_file  # noqa
 
@@ -66,18 +68,18 @@ def test_auto_flush():
         {"str_field": "c", "int_field": 3},
     ]
     with LocalCachedStream("test", schema, logger=logging.getLogger(__name__)) as stream:
-        stream._max_buffer_size = 0
+        stream._max_buffer_size = asizeof.asizeof("a") + asizeof.asizeof(1)
 
         for _ in range(2):
             for rec in data:
                 stream.add_record(rec)
 
-            assert len(os.listdir(stream.cache_dir)) == 3
+            assert len(os.listdir(stream.cache_dir)) == 1
             stream._flush_buffer()
-            files = sorted(os.listdir(stream.cache_dir))
-            assert len(files) == 3
-            for idx in range(len(data)):
-                assert data[idx] == pq.read_table(Path(stream.cache_dir) / files[idx]).to_pylist()[0]
+            files = os.listdir(stream.cache_dir)
+            assert len(files) == 2
+            result_data = itertools.chain(*[pq.read_table(Path(stream.cache_dir) / f).to_pylist() for f in files])
+            assert data == sorted(result_data, key=lambda r: r["str_field"])
 
             stream.reset()
             assert len(os.listdir(stream.cache_dir)) == 0

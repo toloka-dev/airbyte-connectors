@@ -7,9 +7,9 @@ import json
 import logging
 import time
 import typing as tp
+from contextlib import ExitStack
 from uuid import uuid4
 
-from contextlib import ExitStack
 import dbxio
 from airbyte_cdk.destinations import Destination
 from airbyte_cdk.models import (
@@ -75,6 +75,7 @@ class DestinationDatabricks(Destination):
             stream_schema = configured_stream.stream.namespace or default_schema
             assert stream_schema
             stream_tables[stream_name] = table_path(catalog, stream_schema, stream_name)
+            LOGGER.info("Register %s stream. Table path: %s", stream_name, stream_tables[stream_name].table_identifier)
             if configured_stream.destination_sync_mode == DestinationSyncMode.overwrite:
                 dbxio.drop_table(stream_tables[stream_name], client, force=True).wait()
 
@@ -87,6 +88,7 @@ class DestinationDatabricks(Destination):
 
             def flush_streams(streams: tp.List[str]):
                 for stream in streams:
+                    LOGGER.info("Flushing stream %s", stream)
                     cache = buffer[stream]
                     files = cache.get_files()
                     if not files:
@@ -107,11 +109,15 @@ class DestinationDatabricks(Destination):
                 if message.type == Type.STATE:
                     state = message.state
                     if state.type is None or state.type == AirbyteStateType.LEGACY:
+                        LOGGER.info("Got legacy request to flush all streams")
                         streams_to_flush = list(stream_tables.keys())
                     elif state.type == AirbyteStateType.STREAM:
-                        streams_to_flush = [state.stream.stream_descriptor.name]
+                        stream_name = state.stream.stream_descriptor.name
+                        LOGGER.info("Got request to flush stream %s", stream_name)
+                        streams_to_flush = [stream_name]
                     elif state.type == AirbyteStateType.GLOBAL:
                         streams_to_flush = [s.stream_descriptor.name for s in state.global_.stream_states]
+                        LOGGER.info("Got global request to flush streams %s", streams_to_flush)
                     else:
                         raise NotImplementedError(f"Unknown state event: {state.type}")
                     flush_streams(streams_to_flush)
