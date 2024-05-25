@@ -25,7 +25,7 @@ from airbyte_cdk.models import (
 from destination_databricks_py.consts import DEST_SCHEMA, FIELD_AB_ID, FIELD_DATA, FIELD_EMITTED_AT
 from destination_databricks_py.local_cached_stream import LocalCachedStream
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = logging.getLogger("airbyte")
 
 
 def get_client(config: tp.Mapping[str, tp.Any]) -> dbxio.DbxIOClient:
@@ -118,6 +118,8 @@ class DestinationDatabricks(Destination):
                     elif state.type == AirbyteStateType.GLOBAL:
                         streams_to_flush = [s.stream_descriptor.name for s in state.global_.stream_states]
                         LOGGER.info("Got global request to flush streams %s", streams_to_flush)
+                        # BUG: global stream_states keep stream names without prefix
+                        streams_to_flush = list(stream_tables.keys())
                     else:
                         raise NotImplementedError(f"Unknown state event: {state.type}")
                     flush_streams(streams_to_flush)
