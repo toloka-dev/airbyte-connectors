@@ -69,9 +69,11 @@ class DestinationDatabricks(Destination):
         abs_name = config["abs_name"]
         abs_container_name = config["abs_container_name"]
 
+        stream_names: tp.Set[str] = set()
         stream_tables: tp.Dict[str, dbxio.Table] = {}
         for configured_stream in configured_catalog.streams:
             stream_name = configured_stream.stream.name
+            stream_names.add(stream_name)
             stream_schema = configured_stream.stream.namespace or default_schema
             assert stream_schema
             stream_tables[stream_name] = table_path(catalog, stream_schema, stream_name)
@@ -139,19 +141,27 @@ class DestinationDatabricks(Destination):
                             streams_to_flush = [stream_name]
                     elif state.type == AirbyteStateType.GLOBAL:
                         streams = state.global_.stream_states
-                        streams_to_reset = [s.stream_descriptor.name for s in streams if not s.stream_state]
-                        streams_to_flush = [s.stream_descriptor.name for s in streams if s.stream_state]
+                        # BUG: global stream_states keep stream names without prefix
+                        stream_name_map = {}
+                        for s in streams:
+                            name = s.stream_descriptor.name
+                            for with_prefix in stream_names:
+                                if with_prefix.endswith(name):  # FIXME: what if we have several streams with that name?
+                                    stream_name_map[name] = with_prefix
+                                    break
+                            else:
+                                raise KeyError(f"Unknown stream: {s}")
+                        streams_to_reset = [
+                            stream_name_map[s.stream_descriptor.name] for s in streams if not s.stream_state
+                        ]
+                        streams_to_flush = [
+                            stream_name_map[s.stream_descriptor.name] for s in streams if s.stream_state
+                        ]
                         LOGGER.info(
                             "Got global request. Flush streams: %s. Reset streams: %s",
                             streams_to_flush,
                             streams_to_reset,
                         )
-                        # BUG: global stream_states keep stream names without prefix
-                        assert not streams_to_flush and not streams_to_reset
-                        if streams_to_flush:
-                            streams_to_flush = list(stream_tables.keys())
-                        else:
-                            streams_to_reset = list(stream_tables.keys())
                     else:
                         raise NotImplementedError(f"Unknown state event: {state.type}")
                     flush_streams(streams_to_flush)
