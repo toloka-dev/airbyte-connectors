@@ -82,7 +82,7 @@ class DestinationDatabricks(Destination):
         def reset_streams(streams: tp.List[str]):
             for stream in streams:
                 t = stream_tables[stream]
-                LOGGER.info("Resetting stream %s. Dropping table %s", t.table_identifier)
+                LOGGER.info("Resetting stream %s. Dropping table %s", stream, t.table_identifier)
                 dbxio.drop_table(t, client, force=True).wait()
 
         reset_streams(
