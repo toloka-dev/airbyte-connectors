@@ -51,7 +51,7 @@ def get_client(config: tp.Mapping[str, tp.Any]) -> dbxio.DbxIOClient:
 
 def table_path(catalog: str, schema: str, stream: str) -> dbxio.Table:
     return dbxio.Table(
-        f"{catalog}.{schema}.{stream}",
+        f"{catalog}.{schema}._airbyte_raw_{stream}",
         schema=DEST_SCHEMA,
     )
 
@@ -107,21 +107,22 @@ class DestinationDatabricks(Destination):
 
             for message in input_messages:
                 if message.type == Type.STATE:
-                    state = message.state
-                    if state.type is None or state.type == AirbyteStateType.LEGACY:
-                        LOGGER.info("Got legacy request to flush all streams")
-                        streams_to_flush = list(stream_tables.keys())
-                    elif state.type == AirbyteStateType.STREAM:
-                        stream_name = state.stream.stream_descriptor.name
-                        LOGGER.info("Got request to flush stream %s", stream_name)
-                        streams_to_flush = [stream_name]
-                    elif state.type == AirbyteStateType.GLOBAL:
-                        streams_to_flush = [s.stream_descriptor.name for s in state.global_.stream_states]
-                        LOGGER.info("Got global request to flush streams %s", streams_to_flush)
-                        # BUG: global stream_states keep stream names without prefix
-                        streams_to_flush = list(stream_tables.keys())
-                    else:
-                        raise NotImplementedError(f"Unknown state event: {state.type}")
+                    # state = message.state
+                    # if state.type is None or state.type == AirbyteStateType.LEGACY:
+                    #     LOGGER.info("Got legacy request to flush all streams")
+                    #     streams_to_flush = list(stream_tables.keys())
+                    # elif state.type == AirbyteStateType.STREAM:
+                    #     stream_name = state.stream.stream_descriptor.name
+                    #     LOGGER.info("Got request to flush stream %s", stream_name)
+                    #     streams_to_flush = [stream_name]
+                    # elif state.type == AirbyteStateType.GLOBAL:
+                    #     streams_to_flush = [s.stream_descriptor.name for s in state.global_.stream_states]
+                    #     LOGGER.info("Got global request to flush streams %s", streams_to_flush)
+                    #     # BUG: global stream_states keep stream names without prefix
+                    #     streams_to_flush = list(stream_tables.keys())
+                    # else:
+                    #     raise NotImplementedError(f"Unknown state event: {state.type}")
+                    streams_to_flush = list(stream_tables.keys())
                     flush_streams(streams_to_flush)
                     yield message
                 elif message.type == Type.RECORD:
