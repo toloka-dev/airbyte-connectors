@@ -79,6 +79,20 @@ class DestinationDatabricks(Destination):
             if configured_stream.destination_sync_mode == DestinationSyncMode.overwrite:
                 dbxio.drop_table(stream_tables[stream_name], client, force=True).wait()
 
+        def reset_streams(streams: tp.List[str]):
+            for stream in streams:
+                t = stream_tables[stream]
+                LOGGER.info("Resetting stream %s. Dropping table %s", t.table_identifier)
+                dbxio.drop_table(t, client, force=True).wait()
+
+        reset_streams(
+            [
+                s.stream.name
+                for s in configured_catalog.streams
+                if s.destination_sync_mode == DestinationSyncMode.overwrite
+            ]
+        )
+
         batch_id = str(uuid4())
         with ExitStack() as stack:
             buffer = {
@@ -107,23 +121,41 @@ class DestinationDatabricks(Destination):
 
             for message in input_messages:
                 if message.type == Type.STATE:
-                    # state = message.state
-                    # if state.type is None or state.type == AirbyteStateType.LEGACY:
-                    #     LOGGER.info("Got legacy request to flush all streams")
-                    #     streams_to_flush = list(stream_tables.keys())
-                    # elif state.type == AirbyteStateType.STREAM:
-                    #     stream_name = state.stream.stream_descriptor.name
-                    #     LOGGER.info("Got request to flush stream %s", stream_name)
-                    #     streams_to_flush = [stream_name]
-                    # elif state.type == AirbyteStateType.GLOBAL:
-                    #     streams_to_flush = [s.stream_descriptor.name for s in state.global_.stream_states]
-                    #     LOGGER.info("Got global request to flush streams %s", streams_to_flush)
-                    #     # BUG: global stream_states keep stream names without prefix
-                    #     streams_to_flush = list(stream_tables.keys())
-                    # else:
-                    #     raise NotImplementedError(f"Unknown state event: {state.type}")
-                    streams_to_flush = list(stream_tables.keys())
+                    state = message.state
+                    if state.type is None or state.type == AirbyteStateType.LEGACY:
+                        if not state.stream.stream_state:
+                            LOGGER.info("Got legacy request to reset all streams")
+                            streams_to_reset = list(stream_tables.keys())
+                        else:
+                            LOGGER.info("Got legacy request to flush all streams")
+                            streams_to_flush = list(stream_tables.keys())
+                    elif state.type == AirbyteStateType.STREAM:
+                        stream_name = state.stream.stream_descriptor.name
+                        if not state.stream.stream_state:
+                            LOGGER.info("Got request to reset stream %s", stream_name)
+                            streams_to_reset = [stream_name]
+                        else:
+                            LOGGER.info("Got request to flush stream %s", stream_name)
+                            streams_to_flush = [stream_name]
+                    elif state.type == AirbyteStateType.GLOBAL:
+                        streams = state.global_.stream_states
+                        streams_to_reset = [s.stream_descriptor.name for s in streams if not s.stream_state]
+                        streams_to_flush = [s.stream_descriptor.name for s in streams if s.stream_state]
+                        LOGGER.info(
+                            "Got global request. Flush streams: %s. Reset streams: %s",
+                            streams_to_flush,
+                            streams_to_reset,
+                        )
+                        # BUG: global stream_states keep stream names without prefix
+                        assert not streams_to_flush and not streams_to_reset
+                        if streams_to_flush:
+                            streams_to_flush = list(stream_tables.keys())
+                        else:
+                            streams_to_reset = list(stream_tables.keys())
+                    else:
+                        raise NotImplementedError(f"Unknown state event: {state.type}")
                     flush_streams(streams_to_flush)
+                    reset_streams(streams_to_reset)
                     yield message
                 elif message.type == Type.RECORD:
                     record = message.record

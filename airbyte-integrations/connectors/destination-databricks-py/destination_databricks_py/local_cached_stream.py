@@ -30,7 +30,7 @@ class LocalCachedStream:
     _cache_dir: tp.Optional[TemporaryDirectory] = None
     _buffer: tp.Optional[tp.Dict[str, tp.List[tp.Any]]] = None
     _buffer_size: int = 0
-    _max_buffer_size: int = 100 * 2**20  # 100 Mb
+    _max_buffer_size: int = 50 * 2**20  # 100 Mb
     _file_index: int = 0
     _records_count: int = 0
 
