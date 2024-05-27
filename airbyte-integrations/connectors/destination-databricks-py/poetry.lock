@@ -2,13 +2,13 @@
 
 [[package]]
 name = "airbyte-cdk"
-version = "1.1.0"
+version = "1.1.1"
 description = "A framework for writing Airbyte Connectors."
 optional = false
 python-versions = ">=3.9,<4.0"
 files = [
-    {file = "airbyte_cdk-1.1.0-py3-none-any.whl", hash = "sha256:c6ba2800a5a4ea6556e7cd3c771b1f513b8097a4525682694b416dddc5e45862"},
-    {file = "airbyte_cdk-1.1.0.tar.gz", hash = "sha256:09ea58d14cb8ac4a3f283348c220fda70db2137652481e626a7bd729fff0eedc"},
+    {file = "airbyte_cdk-1.1.1-py3-none-any.whl", hash = "sha256:edb8654193499ff3e4741c6bf354953d269c48c147e2f4a6184968e6aaac6302"},
+    {file = "airbyte_cdk-1.1.1.tar.gz", hash = "sha256:96787fb5d3f1ca695d13cbbc0873397b479c7d6a3d3b10634b5a54ab5d6b55ef"},
 ]
 
 [package.dependencies]
@@ -561,13 +561,13 @@ reference = "azure"
 
 [[package]]
 name = "dbxio"
-version = "0.0.26"
+version = "0.0.27"
 description = "High-level Databricks client"
 optional = false
 python-versions = ">=3.9,<4.0"
 files = [
-    {file = "dbxio-0.0.26-py3-none-any.whl", hash = "sha256:2e59a77fb4091ccdb80fe9ba8ad7bf5c602274a0760bc31d16f4e8aecb93d180"},
-    {file = "dbxio-0.0.26.tar.gz", hash = "sha256:902e5be0d459bd3cc3308f965d8997b2a4b5a087bea6acef753c1af042cdb3c0"},
+    {file = "dbxio-0.0.27-py3-none-any.whl", hash = "sha256:9eb31d04b75eac245a2f332d36d9695e52f90e24d66c27f3afa63529359c5f1d"},
+    {file = "dbxio-0.0.27.tar.gz", hash = "sha256:53bddc806023e344c28c5efe6d373ca5028493ef46460a29b25ccb419e301edd"},
 ]
 
 [package.dependencies]
@@ -2385,4 +2385,4 @@ reference = "azure"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "899537a96d14ea9f882b7af80dc572449e5b92f1c2288375c1b51640aa89d1ba"
+content-hash = "18d138a4d4cabc5db5f60a133dd46426f5bdfe3119b3203f6ab2543d635f45d1"

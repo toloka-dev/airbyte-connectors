@@ -24,6 +24,7 @@ from airbyte_cdk.models import (
 
 from destination_databricks_py.consts import DEST_SCHEMA, FIELD_AB_ID, FIELD_DATA, FIELD_EMITTED_AT
 from destination_databricks_py.local_cached_stream import LocalCachedStream
+from destination_databricks_py.logging import init_logging
 
 LOGGER = logging.getLogger("airbyte")
 
@@ -57,6 +58,10 @@ def table_path(catalog: str, schema: str, stream: str) -> dbxio.Table:
 
 
 class DestinationDatabricks(Destination):
+    def __init__(self, *args, **kwargs):
+        super.__init__(*args, **kwargs)
+        init_logging()
+
     def write(
         self,
         config: tp.Mapping[str, tp.Any],
