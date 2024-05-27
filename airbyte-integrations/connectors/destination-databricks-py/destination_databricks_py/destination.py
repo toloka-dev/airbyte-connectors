@@ -29,7 +29,7 @@ from destination_databricks_py.logging import init_logging
 LOGGER = logging.getLogger("airbyte")
 
 
-def __ensure_bool(v: tp.Any) -> bool:
+def _ensure_bool(v: tp.Any) -> bool:
     assert isinstance(v, bool)
     return v
 
@@ -69,7 +69,7 @@ class DestinationDatabricks(Destination):
         configured_catalog: ConfiguredAirbyteCatalog,
         input_messages: tp.Iterable[AirbyteMessage],
     ) -> tp.Iterable[AirbyteMessage]:
-        init_logging(debug=__ensure_bool(config.get("enable_debug")))
+        init_logging(debug=_ensure_bool(config.get("enable_debug")))
 
         client = get_client(config=config)
         catalog = config["database"]
