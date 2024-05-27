@@ -260,6 +260,13 @@
         "description": "Default to 'true'. Switch it to 'false' for debugging purpose.",
         "default": true,
         "order": 12
+      },
+      "enable_debug": {
+        "title": "Enable debug logging",
+        "type": "boolean",
+        "description": "Default to 'false'. Switch it to 'false' for debugging purpose.",
+        "default": false,
+        "order": 13
       }
     }
   }

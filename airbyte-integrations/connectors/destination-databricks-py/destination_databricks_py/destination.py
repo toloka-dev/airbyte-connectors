@@ -58,16 +58,14 @@ def table_path(catalog: str, schema: str, stream: str) -> dbxio.Table:
 
 
 class DestinationDatabricks(Destination):
-    def __init__(self, *args, **kwargs):
-        super.__init__(*args, **kwargs)
-        init_logging()
-
     def write(
         self,
         config: tp.Mapping[str, tp.Any],
         configured_catalog: ConfiguredAirbyteCatalog,
         input_messages: tp.Iterable[AirbyteMessage],
     ) -> tp.Iterable[AirbyteMessage]:
+        init_logging(debug=config.get("enable_debug"))
+
         client = get_client(config=config)
         catalog = config["database"]
         default_schema = config["schema"]

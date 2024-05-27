@@ -561,13 +561,13 @@ reference = "azure"
 
 [[package]]
 name = "dbxio"
-version = "0.0.27"
+version = "0.0.28"
 description = "High-level Databricks client"
 optional = false
 python-versions = ">=3.9,<4.0"
 files = [
-    {file = "dbxio-0.0.27-py3-none-any.whl", hash = "sha256:9eb31d04b75eac245a2f332d36d9695e52f90e24d66c27f3afa63529359c5f1d"},
-    {file = "dbxio-0.0.27.tar.gz", hash = "sha256:53bddc806023e344c28c5efe6d373ca5028493ef46460a29b25ccb419e301edd"},
+    {file = "dbxio-0.0.28-py3-none-any.whl", hash = "sha256:38413a84299914ec1ef2b87251e4c2cca2e7b49aa08c53c150f6ac450eb01d9c"},
+    {file = "dbxio-0.0.28.tar.gz", hash = "sha256:84ca27a2bc9c6f7cf26e903cacee1edbc5b81b5fc69078713dde34747aa6e734"},
 ]
 
 [package.dependencies]
@@ -2385,4 +2385,4 @@ reference = "azure"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "18d138a4d4cabc5db5f60a133dd46426f5bdfe3119b3203f6ab2543d635f45d1"
+content-hash = "f6ccae483db0d1b5307155da0dc52e31a671a858518c3da2c8b8c39db5ca6e3d"

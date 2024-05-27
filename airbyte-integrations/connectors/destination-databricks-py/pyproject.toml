@@ -4,7 +4,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name = "airbyte-destination-databricks-py"
-version = "0.1.12"
+version = "0.1.15"
 description = "Airbyte destination implementation for Databricks (python)."
 authors = ["Leonid Kozhinov <lkozhinov@toloka.ai>"]
 license = "MIT"
@@ -23,7 +23,7 @@ include = "destination_databricks_py"
 [tool.poetry.dependencies]
 python = "^3.9"
 airbyte-cdk = "^1.1.0"
-dbxio = "0.0.27"
+dbxio = "0.0.28"
 attrs = "^23.2.0"
 pympler = "^1.0.1"
 
