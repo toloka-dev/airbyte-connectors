@@ -29,6 +29,11 @@ from destination_databricks_py.logging import init_logging
 LOGGER = logging.getLogger("airbyte")
 
 
+def __ensure_bool(v: tp.Any) -> bool:
+    assert isinstance(v, bool)
+    return v
+
+
 def get_client(config: tp.Mapping[str, tp.Any]) -> dbxio.DbxIOClient:
     http_path = config["databricks_http_path"]
     server_hostname = config["databricks_server_hostname"]
@@ -64,7 +69,7 @@ class DestinationDatabricks(Destination):
         configured_catalog: ConfiguredAirbyteCatalog,
         input_messages: tp.Iterable[AirbyteMessage],
     ) -> tp.Iterable[AirbyteMessage]:
-        init_logging(debug=config.get("enable_debug"))
+        init_logging(debug=__ensure_bool(config.get("enable_debug")))
 
         client = get_client(config=config)
         catalog = config["database"]
