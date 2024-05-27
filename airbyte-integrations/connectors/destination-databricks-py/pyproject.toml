@@ -22,7 +22,7 @@ include = "destination_databricks_py"
 
 [tool.poetry.dependencies]
 python = "^3.9"
-airbyte-cdk = "^1.1.0"
+airbyte-cdk = "1.1.0.dev0"  # feature/NO_TICKET_airbyte_cdk_fix_global_state_event
 dbxio = "0.0.28"
 attrs = "^23.2.0"
 pympler = "^1.0.1"
