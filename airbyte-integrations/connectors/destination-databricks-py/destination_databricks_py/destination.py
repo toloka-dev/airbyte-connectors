@@ -5,9 +5,9 @@
 
 import json
 import logging
-import time
 import typing as tp
 from contextlib import ExitStack
+from datetime import datetime
 from uuid import uuid4
 
 import dbxio
@@ -30,6 +30,8 @@ LOGGER = logging.getLogger("airbyte")
 
 
 def _ensure_bool(v: tp.Any) -> bool:
+    if v is None or v == "":
+        v = False
     assert isinstance(v, bool)
     return v
 
@@ -180,7 +182,7 @@ class DestinationDatabricks(Destination):
                     buffer[record.stream].add_record(
                         {
                             FIELD_AB_ID: batch_id,
-                            FIELD_EMITTED_AT: record.emitted_at,
+                            FIELD_EMITTED_AT: datetime.utcfromtimestamp(record.emitted_at / 1000),
                             FIELD_DATA: json.dumps(record.data, separators=(",", ":")),
                         }
                     )
@@ -203,7 +205,7 @@ class DestinationDatabricks(Destination):
             dbxio.bulk_write_table(
                 table=t,
                 new_records=[
-                    {FIELD_DATA: '{"key": "value"}', FIELD_EMITTED_AT: int(time.time()), FIELD_AB_ID: str(uuid4())}
+                    {FIELD_DATA: '{"key": "value"}', FIELD_EMITTED_AT: datetime.now(), FIELD_AB_ID: str(uuid4())}
                 ],
                 client=client,
                 abs_name=abs_name,

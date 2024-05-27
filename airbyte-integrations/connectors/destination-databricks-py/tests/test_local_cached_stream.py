@@ -1,6 +1,7 @@
 import itertools
 import logging
 import os
+from datetime import datetime
 from pathlib import Path
 from tempfile import mkstemp
 
@@ -16,11 +17,13 @@ def test_save_to_parquet_file():
         [
             {"name": "str_field", "type": dbxio.types.StringType()},
             {"name": "int_field", "type": dbxio.types.IntType()},
+            {"name": "timestamp_field", "type": dbxio.types.TimestampType()},
         ]
     )
     data = {
         "str_field": ["a", "b", "c"],
         "int_field": [1, 2, 3],
+        "timestamp_field": [datetime.now(), datetime.now(), datetime.now()],
     }
     _, f_name = mkstemp(suffix=".parquet")
     _save_to_parquet_file(data, schema, f_name)
