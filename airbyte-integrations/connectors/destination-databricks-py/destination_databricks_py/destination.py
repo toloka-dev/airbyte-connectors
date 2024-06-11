@@ -134,6 +134,8 @@ class DestinationDatabricks(Destination):
             for message in input_messages:
                 if message.type == Type.STATE:
                     state = message.state
+                    streams_to_flush = []
+                    streams_to_reset = []
                     if state.type is None or state.type == AirbyteStateType.LEGACY:
                         if not state.stream.stream_state:
                             LOGGER.info("Got legacy request to reset all streams")
