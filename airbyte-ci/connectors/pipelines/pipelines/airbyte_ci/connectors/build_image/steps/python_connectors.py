@@ -9,6 +9,7 @@ from dagger import Container, Platform
 from pipelines.airbyte_ci.connectors.build_image.steps import build_customization
 from pipelines.airbyte_ci.connectors.build_image.steps.common import BuildConnectorImagesBase
 from pipelines.airbyte_ci.connectors.context import ConnectorContext
+from pipelines.dagger.actions import secrets
 from pipelines.dagger.actions.python.common import apply_python_development_overrides, with_python_connector_installed
 from pipelines.models.steps import StepResult
 
@@ -60,6 +61,12 @@ class BuildConnectorImages(BuildConnectorImagesBase):
         """
         self.logger.info(f"Building connector from base image in metadata for {platform}")
         base = self._get_base_container(platform)
+
+        secrets_dir = f"{self.context.connector.code_directory}/secrets"
+        base = base.with_(await secrets.mounted_connector_secrets(
+            self.context, secrets_dir, self.context.local_secret_store.get_all_secrets()
+        ))
+
         customized_base = await build_customization.pre_install_hooks(self.context.connector, base, self.logger)
         entrypoint = build_customization.get_entrypoint(self.context.connector)
         main_file_name = build_customization.get_main_file_name(self.context.connector)
