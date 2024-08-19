@@ -22,8 +22,12 @@ See `integration_tests/sample_config.json` for a sample config file.
 
 ### Locally running the connector
 ```
+# prepare env
+poetry update && poetry install
+poetry shell
+
 python main.py spec
-python main.py check
+python main.py check --config secrets/config.json
 python main.py write --catalog integration_tests/configured_catalog.json
 ```
 
@@ -107,7 +111,7 @@ You can run our full test suite locally using [`airbyte-ci`](https://github.com/
 airbyte-ci connectors --name=destination-databricks-py test
 ```
 
-### Unit Tests
+### Unit Tests[tests](tests)
 To run unit tests locally, from the connector directory run:
 ```
 poetry run pytest -s unit_tests
