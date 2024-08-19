@@ -1,0 +1,11 @@
+*
+!README.md
+!Dockerfile
+!main.py
+!destination_databricks_py
+!metadata.yaml
+!pyproject.toml
+!poetry.lock
+!build_customization.py
+!icon.svg
+!Makefile

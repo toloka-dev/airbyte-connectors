@@ -1,0 +1,37 @@
+data:
+  ab_internal:
+    ql: 300
+    sl: 200
+  allowedHosts:
+    hosts:
+      - ${workspace_host}
+  connectorBuildOptions:
+    baseImage: docker.io/airbyte/python-connector-base:1.2.0@sha256:c22a9d97464b69d6ef01898edf3f8612dc11614f05a84984451dde195f337db9
+  connectorSubtype: database
+  connectorType: destination
+  definitionId: 2d80b84c-8d22-4520-bd66-db39a3679964
+  dockerImageTag: 0.1.0
+  dockerRepository: airbyte/destination-databricks-py
+  documentationUrl: ""
+  githubIssueLabel: toloka-destination-databricks-py
+  icon: databricks.svg
+  license: MIT
+  name: Databricks (python)
+  registries:
+    cloud:
+      enabled: false
+    oss:
+      enabled: true
+  releaseStage: alpha
+  releases: {}
+  resourceRequirements:
+    jobSpecific:
+      - jobType: sync
+        resourceRequirements:
+          memory_limit: 2Gi
+          memory_request: 2Gi
+  supportLevel: community
+  tags:
+    - language:python
+    - cdk:python
+metadataSpecVersion: "1.0"
