@@ -1,0 +1,5 @@
+{
+  "url" : "https://victoria-metrics:8428",
+  "metric_name" : "some_metric",
+  "n_hours_lookups" : 1
+}
