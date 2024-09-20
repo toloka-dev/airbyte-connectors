@@ -13,26 +13,26 @@ connectionSpecification:
       description: >-
         URL must be in the format of https://<victoria_metrics_base_url>[:<port>]
       type: string
-      metric_name:
-        order: 1
-        title: Metric Name
-        description: >-
-          The name of the metric you want to export
-        type: string
-      n_hours_lookups:
-        order: 2
-        title: Number of hours to look back
-        description: >-
-          The number of hours to look back in the past
-        type: integer
-        default: 1
-        minimum: 1
-        maximum: 24
-      step_in_sec:
-        order: 3
-        title: Step in seconds
-        description: >-
-          The step in seconds for the query
-        type: integer
-        default: 15
-        minimum: 1
+    metric_name:
+      order: 1
+      title: Metric Name
+      description: >-
+        The name of the metric you want to export
+      type: string
+    n_hours_lookups:
+      order: 2
+      title: Number of hours to look back
+      description: >-
+        The number of hours to look back in the past
+      type: integer
+      default: 1
+      minimum: 1
+      maximum: 24
+    step_in_sec:
+      order: 3
+      title: Step in seconds
+      description: >-
+        The step in seconds for the query
+      type: integer
+      default: 15
+      minimum: 1
