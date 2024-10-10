@@ -23,8 +23,8 @@ from airbyte_cdk.models import (
 )
 
 from destination_databricks_py.consts import DEST_SCHEMA, FIELD_AB_ID, FIELD_DATA, FIELD_EMITTED_AT
-from destination_databricks_py.local_cached_stream import LocalCachedStream
 from destination_databricks_py.logging import init_logging
+from destination_databricks_py.writer import DbxWriter
 
 LOGGER = logging.getLogger("airbyte")
 
@@ -80,22 +80,29 @@ class DestinationDatabricks(Destination):
         abs_container_name = config["abs_container_name"]
 
         stream_names: tp.Set[str] = set()
-        stream_tables: tp.Dict[str, dbxio.Table] = {}
+        stream_writers: tp.Dict[str, DbxWriter] = {}
         for configured_stream in configured_catalog.streams:
             stream_name = configured_stream.stream.name
             stream_names.add(stream_name)
             stream_schema = configured_stream.stream.namespace or default_schema
             assert stream_schema
-            stream_tables[stream_name] = table_path(catalog, stream_schema, stream_name)
-            LOGGER.info("Register %s stream. Table path: %s", stream_name, stream_tables[stream_name].table_identifier)
-            if configured_stream.destination_sync_mode == DestinationSyncMode.overwrite:
-                dbxio.drop_table(stream_tables[stream_name], client, force=True).wait()
+            stream_writers[stream_name] = DbxWriter.create(
+                client=client,
+                stream_name=stream_name,
+                table=table_path(catalog, stream_schema, stream_name),
+                abs_name=abs_name,
+                abs_container_name=abs_container_name,
+                sync_mode=configured_stream.destination_sync_mode,
+                logger=LOGGER,
+            )
 
         def reset_streams(streams: tp.List[str]):
             for stream in streams:
-                t = stream_tables[stream]
-                LOGGER.info("Resetting stream %s. Dropping table %s", stream, t.table_identifier)
-                dbxio.drop_table(t, client, force=True).wait()
+                stream_writers[stream].reset_stream()
+
+        def flush_streams(streams: tp.List[str]):
+            for stream in streams:
+                stream_writers[stream].flush()
 
         reset_streams(
             [
@@ -107,29 +114,8 @@ class DestinationDatabricks(Destination):
 
         batch_id = str(uuid4())
         with ExitStack() as stack:
-            buffer = {
-                s.stream.name: stack.enter_context(LocalCachedStream(s.stream.name, DEST_SCHEMA, LOGGER))
-                for s in configured_catalog.streams
-            }
-
-            def flush_streams(streams: tp.List[str]):
-                for stream in streams:
-                    LOGGER.info("Flushing stream %s", stream)
-                    cache = buffer[stream]
-                    files = cache.get_files()
-                    if not files:
-                        continue
-                    dbxio.bulk_write_local_files(
-                        table=stream_tables[stream],
-                        path=cache.cache_dir,
-                        table_format=dbxio.TableFormat.PARQUET,
-                        client=client,
-                        abs_name=abs_name,
-                        abs_container_name=abs_container_name,
-                        append=True,
-                        force=True,
-                    )
-                    cache.reset()
+            for s in configured_catalog.streams:
+                stack.enter_context(stream_writers[s.stream.name])
 
             for message in input_messages:
                 if message.type == Type.STATE:
@@ -139,10 +125,10 @@ class DestinationDatabricks(Destination):
                     if state.type is None or state.type == AirbyteStateType.LEGACY:
                         if not state.stream.stream_state:
                             LOGGER.info("Got legacy request to reset all streams")
-                            streams_to_reset = list(stream_tables.keys())
+                            streams_to_reset = list(stream_writers.keys())
                         else:
                             LOGGER.info("Got legacy request to flush all streams")
-                            streams_to_flush = list(stream_tables.keys())
+                            streams_to_flush = list(stream_writers.keys())
                     elif state.type == AirbyteStateType.STREAM:
                         stream_name = state.stream.stream_descriptor.name
                         if not state.stream.stream_state:
@@ -181,7 +167,7 @@ class DestinationDatabricks(Destination):
                     yield message
                 elif message.type == Type.RECORD:
                     record = message.record
-                    buffer[record.stream].add_record(
+                    stream_writers[record.stream].add_record(
                         {
                             FIELD_AB_ID: batch_id,
                             FIELD_EMITTED_AT: datetime.utcfromtimestamp(record.emitted_at / 1000),
@@ -191,7 +177,7 @@ class DestinationDatabricks(Destination):
                 else:
                     continue
 
-            flush_streams(list(stream_tables.keys()))
+            flush_streams(list(stream_writers.keys()))
 
     def check(self, logger: logging.Logger, config: tp.Mapping[str, tp.Any]) -> AirbyteConnectionStatus:
         logger.debug("Databricks Destination Config Check")
