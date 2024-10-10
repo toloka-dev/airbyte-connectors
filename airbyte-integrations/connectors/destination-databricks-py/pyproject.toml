@@ -4,7 +4,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name = "airbyte-destination-databricks-py"
-version = "0.2.0"
+version = "0.2.1"
 description = "Airbyte destination implementation for Databricks (python)."
 authors = ["Leonid Kozhinov <lkozhinov@toloka.ai>"]
 license = "MIT"
@@ -23,7 +23,7 @@ include = "destination_databricks_py"
 [tool.poetry.dependencies]
 python = "^3.9"
 airbyte-cdk = "1.1.0.dev2"  # feature/NO_TICKET_airbyte_cdk_fix_global_state_event
-dbxio = "0.5.0"
+dbxio = "0.5.1"
 attrs = "^23.2.0"
 pympler = "^1.0.1"
 
