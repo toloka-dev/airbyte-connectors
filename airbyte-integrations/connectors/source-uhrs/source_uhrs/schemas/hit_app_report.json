@@ -1,0 +1,99 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "HitAppName": {
+      "type": ["null", "string"]
+    },
+    "HitAppID": {
+      "type": ["null", "integer"]
+    },
+    "QualificationStatus": {
+      "type": ["null", "string"]
+    },
+    "TotalJudgments": {
+      "type": ["null", "integer"]
+    },
+    "JudgingHours": {
+      "type": ["null", "number"]
+    },
+    "JudgmentsPerHour": {
+      "type": ["null", "number"]
+    },
+    "RTATotal": {
+      "type": ["null", "integer"]
+    },
+    "RTATotalRatio": {
+      "type": ["null", "number"]
+    },
+    "RTACorrect": {
+      "type": ["null", "integer"]
+    },
+    "RTAAccuracy": {
+      "type": ["null", "number"]
+    },
+    "RTAOffByAccuracy": {
+      "type": ["null", "number"]
+    },
+    "SpamTotal": {
+      "type": ["null", "integer"]
+    },
+    "SpamTotalRatio": {
+      "type": ["null", "number"]
+    },
+    "SpamCorrect": {
+      "type": ["null", "integer"]
+    },
+    "SpamAccuracy": {
+      "type": ["null", "number"]
+    },
+    "SpamOffByAccuracy": {
+      "type": ["null", "number"]
+    },
+    "ReviewTotal": {
+      "type": ["null", "integer"]
+    },
+    "ReviewCorrect": {
+      "type": ["null", "integer"]
+    },
+    "ReviewAccuracy": {
+      "type": ["null", "number"]
+    },
+    "ReviewOffByAccuracy": {
+      "type": ["null", "number"]
+    },
+    "OverlapPairs": {
+      "type": ["null", "integer"]
+    },
+    "PairwiseAgreement": {
+      "type": ["null", "number"]
+    },
+    "AgreementWithMostCommon": {
+      "type": ["null", "number"]
+    },
+    "PairwiseOffBy": {
+      "type": ["null", "number"]
+    },
+    "OffByToMean": {
+      "type": ["null", "number"]
+    },
+    "IncentiveEarnings": {
+      "type": ["null", "number"]
+    },
+    "TotalEarnings": {
+      "type": ["null", "number"]
+    },
+    "EarningsPerHour": {
+      "type": ["null", "number"]
+    },
+    "AvailableJudgments": {
+      "type": ["null", "integer"]
+    },
+    "pst_report_dt": {
+      "type": "string"
+    },
+    "utc_download_dttm": {
+      "type": "string"
+    }
+  }
+}

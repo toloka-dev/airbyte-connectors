@@ -1,0 +1,55 @@
+documentationUrl: https://docsurl.com
+connectionSpecification:
+  $schema: http://json-schema.org/draft-07/schema#
+  title: Uhrs Spec
+  type: object
+  required:
+    - uhrs_secret
+    - client_id
+    - tenant_id
+    - resource_id
+    - start_date
+  properties:
+    uhrs_secret:
+      order: 3
+      title: UHRS secret
+      type: string
+      description: Used to retrieve an oauth token.
+      airbyte_secret: true
+      examples:
+        - "BgmWsgfYO4nFLkydnWVZVDqOjWPuyD-td,U56fdT"
+    tenant_id:
+      order: 0
+      title: UHRS Tenant ID
+      type: string
+      description: "Microsoft tenant id to get access to oauth token. Used to build authority url (https://login.microsoftonline.com/<tenant_id>)."
+      examples:
+        - "e6810ae1-b6a7-11ed-9fa3-9d7ccf946298"
+    resource_id:
+      order: 1
+      title: UHRS Resource ID
+      type: string
+      description: "Resource id within the tenant to get the token for. Used to build resource url (e.g. api://<resource_id>)."
+      examples:
+        - "b6810ae1-b6a7-11ed-9fa3-9d7ccf946298"
+    client_id:
+      order: 2
+      title: UHRS Client ID
+      type: string
+      description: Client ID in Microsoft AD for which the oauth token is requested
+      examples:
+        - "c6810ae1-b6a7-11ed-9fa3-9d7ccf946298"
+    start_date:
+      order: 5
+      title: Start Date (US/Pacific)
+      type: string
+      pattern: ^[0-9]{4}-[0-9]{2}-[0-9]{2}
+      examples:
+        - 2022-01-22
+    end_date:
+      order: 6
+      title: End Date (US/Pacific)
+      type: string
+      pattern: ^[0-9]{4}-[0-9]{2}-[0-9]{2}
+      examples:
+        - 2022-01-22

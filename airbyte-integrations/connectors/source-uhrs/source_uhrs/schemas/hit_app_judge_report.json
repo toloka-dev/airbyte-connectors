@@ -1,0 +1,126 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+      "HitAppName": {
+    "type": ["null", "string"]
+    },
+    "HitAppID": {
+      "type": ["null", "integer"]
+    },
+    "JudgeID": {
+      "type": ["null", "integer"]
+    },
+    "Alias": {
+      "type": ["null", "string"]
+    },
+    "QualificationStatus": {
+      "type": ["null", "string"]
+    },
+    "CurrentStatus": {
+      "type": ["null", "string"]
+    },
+    "CountryCode": {
+      "type": ["null", "string"]
+    },
+    "TotalJudgments": {
+      "type": ["null", "integer"]
+    },
+    "JudgingHours": {
+      "type": ["null", "number"]
+    },
+    "JudgmentsPerHour": {
+      "type": ["null", "number"]
+    },
+    "RTATotal": {
+      "type": ["null", "integer"]
+    },
+    "RTATotalRatio": {
+      "type": ["null", "number"]
+    },
+    "RTAAccuracy": {
+      "type": ["null", "number"]
+    },
+    "RTAOffByAccuracy": {
+      "type": ["null", "number"]
+    },
+    "RTACorrect": {
+      "type": ["null", "integer"]
+    },
+    "SpamTotal": {
+      "type": ["null", "integer"]
+    },
+    "SpamTotalRatio": {
+      "type": ["null", "number"]
+    },
+    "SpamAccuracy": {
+      "type": ["null", "number"]
+    },
+    "SpamOffByAccuracy": {
+      "type": ["null", "number"]
+    },
+    "SpamCorrect": {
+      "type": ["null", "integer"]
+    },
+    "ReviewTotal": {
+      "type": ["null", "integer"]
+    },
+    "ReviewCorrect": {
+      "type": ["null", "integer"]
+    },
+    "ReviewAccuracy": {
+      "type": ["null", "number"]
+    },
+    "ReviewOffByAccuracy": {
+      "type": ["null", "number"]
+    },
+    "PairwiseAgreement": {
+      "type": ["null", "number"]
+    },
+    "PairwiseOffBy": {
+      "type": ["null", "number"]
+    },
+    "OverlapPairs": {
+      "type": ["null", "integer"]
+    },
+    "OffByToMean": {
+      "type": ["null", "number"]
+    },
+    "AgreementWithMostCommon": {
+      "type": ["null", "number"]
+    },
+    "VendorName": {
+      "type": ["null", "string"]
+    },
+    "VendorID": {
+      "type": ["null", "integer"]
+    },
+    "JudgeGroupName": {
+      "type": ["null", "string"]
+    },
+    "JudgeGroupID": {
+      "type": ["null", "integer"]
+    },
+    "IncentiveEarnings": {
+      "type": ["null", "number"]
+    },
+    "TotalEarnings": {
+      "type": ["null", "number"]
+    },
+    "NumTempDisables": {
+      "type": ["null", "integer"]
+    },
+    "NumPermDisables": {
+      "type": ["null", "integer"]
+    },
+    "EarningsPerHour": {
+      "type": ["null", "number"]
+    },
+    "pst_report_dt": {
+      "type": "string"
+    },
+    "utc_download_dttm": {
+      "type": "string"
+    }
+  }
+}
