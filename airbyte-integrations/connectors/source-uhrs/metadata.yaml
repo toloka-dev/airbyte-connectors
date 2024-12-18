@@ -1,0 +1,19 @@
+data:
+  name: UHRS
+  registries:
+    cloud:
+      enabled: true
+    oss:
+      enabled: true
+  dockerImageTag: 0.2.1
+  dockerRepository: airbyte/source-uhrs
+  releaseStage: beta
+  remoteRegistries:
+    pypi:
+      enabled: true
+      packageName: airbyte-source-uhrs
+  supportLevel: community
+  tags:
+    - language:python
+    - cdk:python
+metadataSpecVersion: "1.0"
