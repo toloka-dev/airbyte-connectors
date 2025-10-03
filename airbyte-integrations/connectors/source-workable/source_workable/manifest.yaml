@@ -19,6 +19,7 @@ definitions:
       Content-Type: application/json
     request_parameters:
       created_after: "{{ config['start_date'] }}"
+      updated_after: "{{ day_delta(config['updated_last_n_days'] * -1, format='%Y-%m-%dT%H:%M:%SZ') }}"
     error_handler:
       type: CompositeErrorHandler
       error_handlers:

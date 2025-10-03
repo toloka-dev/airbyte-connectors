@@ -65,3 +65,7 @@ You've checked out the repo, implemented a million dollar feature, and you're re
 6. Pat yourself on the back for being an awesome contributor.
 7. Someone from Airbyte will take a look at your PR and iterate with you to merge it into master.
 
+# Toloka related
+
+If you are not able to build amd64 image, via airbyte-ci locally, you may use already existing image and just add files to it.
+Check [Dockerfile.crutch](./Dockerfile.crutch) for more details.

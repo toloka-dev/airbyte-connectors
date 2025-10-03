@@ -1,5 +1,6 @@
 {
   "api_key": "<api_key>",
   "account_subdomain": "<account_subdomain>",
-  "start_date": "<YYYYMMDDTHHMMSSZ>"
+  "start_date": "<YYYYMMDDTHHMMSSZ>",
+  "updated_last_n_days": 10
 }

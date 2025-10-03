@@ -7,6 +7,7 @@ connectionSpecification:
     - api_key
     - account_subdomain
     - start_date
+    - updated_last_n_days
   additionalProperties: true
   properties:
     api_key:
@@ -29,3 +30,11 @@ connectionSpecification:
         - 20150708T115616Z
         - 20221115T225616Z
       order: 2
+    updated_last_n_days:
+      title: Updated Last N Days
+      type: integer
+      description: "Get data that was updated in the last N days."
+      minimum: 1
+      maximum: 10000
+      default: 10
+      order: 3
